@@ -1,0 +1,30 @@
+{
+    "1": [
+        "- How does this program obtain information?", 
+        "Information is obtained from an API called PokéAPI which stores data about every pokémon created thus far."
+    ], 
+    "2": [
+        "- Which pokédex will the pokémon information match?",
+        "All information will match information from the national pokédex which contains all pokémon from every generation."
+    ],
+    "3": [
+        "- How can I find information about a specific pokémon?",
+        "By selecting the search by pokémon name option, once a name is entered a page with all the information about that pokémon will come up."
+    ],
+    "4": [
+        "- What does the generate a random pokémon name option do?",
+        "Selecting this option will generate a random pokémon name which you can then use to look up information about that pokémon."
+    ],
+    "5": [
+        "- Where can I view the moves that a pokémon can learn?",
+        "Since a single pokémon can learn over 100 moves, it would clog up the page and none of the other information would be seen. Instead, once the page of information comes up, use the up and down arrow keys to select the *View moves* option. Once selected, type in all, level-up, egg, tutor, or machine to see either all moves or the moves learned by a specific method (level-up, egg, tutor, machine)."
+    ],
+    "6": [
+        "- How do I view the evolution chain of a specific pokémon?",
+        "First you must search for that pokémon by name and once the information page pops up, the evolution chain information is listed on the page."
+    ],
+    "7": [
+        "- How do I view the base stats of a specific pokémon?",
+        "First you must search for that pokémon by name and once the information page pops up, use the up and down arrow keys to select the *View base stats* option."
+    ]
+}

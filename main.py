@@ -7,7 +7,8 @@ import time
 from termcolor import colored
 
 # change text selection color for better readability
-color_theme = inquirer.themes.load_theme_from_dict({"List": {"selection_color": "bright_red", "selection_cursor": ">"}})
+color_theme = inquirer.themes.load_theme_from_dict({"List": {"selection_color": "bright_red",
+                                                             "selection_cursor": ">"}})
 
 def main():
     """Main driver function"""
@@ -163,7 +164,10 @@ def get_moves(result):
                     count += 1
             else:
                 break
-        print('\n' + " ○ " + colored('Total moves viewed: ' + f"{count}" + "/" + f"{total}", 'red'))
+
+        total_viewed = f"{count}" + "/" + f"{total}"
+        print('\n' + " ○ " + colored('Total moves viewed: ' + total_viewed, 'red'))
+
         if count == total:
             break
         next_page = inquirer.confirm("View more moves?", default = True)

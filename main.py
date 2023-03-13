@@ -3,12 +3,16 @@ import requests
 import inquirer
 import pyfiglet
 import textwrap
+import time
+from termcolor import colored
+
+TAB = "   "
 
 # change text selection color for better readability
 color_theme = inquirer.themes.load_theme_from_dict({"List": {"selection_color": "bright_red", "selection_cursor": ">"}})
 
 def main():
-    """Add docstring later"""
+    """Main driver function"""
     name = pyfiglet.figlet_format("PokeCLI", font="standard")
     goodbye_msg = pyfiglet.figlet_format("GoodBye", font="standard")
     print(name)
@@ -23,20 +27,20 @@ def main():
             faq()
         if choice == "Search by pokémon name (e.g., pikachu)":
             search_by_name()
-        if choice == "Generate a random pokémon name":
-            print("Not yet implemented")
+        if choice == "Generate a random pokémon":
+            generate_random_pokemon()
         if choice == "Exit":
             break
     print(goodbye_msg)
 
 def options():
-    """Add docstring later"""
+    """Options for user selection function"""
     option = [
         inquirer.List('choice',
                       message="- Select an option",
                       choices=["FAQ",
                                "Search by pokémon name (e.g., pikachu)",
-                               "Generate a random pokémon name",
+                               "Generate a random pokémon",
                                "Exit"],
                     ),
     ]
@@ -44,7 +48,7 @@ def options():
     return answer
 
 def faq():
-    """add docstring later"""
+    """FAQ function"""
     faq_header = pyfiglet.figlet_format("FAQ", font="standard")
     print(faq_header)
     f = open('faq.json')
@@ -67,79 +71,151 @@ def faq():
     inquirer.prompt(option, theme=color_theme)
 
 def search_by_name():
-    """add docstring later"""
+    """Search function"""
     poke_name = [inquirer.Text('name', message="Enter a pokémon name")]
     answer = inquirer.prompt(poke_name)
+    poke_name = answer['name'].replace('.', ' ').replace(' ', '-').lower()
 
-    response = requests.get("https://pokeapi.co/api/v2/pokemon/" + f"{answer['name'].lower()}")
+    response = requests.get("https://pokeapi.co/api/v2/pokemon/" + poke_name)
+    get_results(response)
+
+def generate_random_pokemon():
+    """Generate random pokemon function"""
+    prng_file = open('prng-service.txt', 'w')
+    prng_file.write('run')
+    prng_file.close()
+    time.sleep(2)
+    prng_file = open('prng-service.txt', 'r')
+    rand_num = prng_file.readline()
+
+    response = requests.get("https://pokeapi.co/api/v2/pokemon/" + rand_num)
+    get_results(response)
+
+def get_type(result):
+    """Get and display pokemon type"""
+    types = result['types']
+    if len(types) > 1:
+        type_str = types[0]['type']['name'] + "/" + types[1]['type']['name']
+        print(TAB + "Type: " + type_str)
+    else:
+        print(TAB + "Type: " + f"{types[0]['type']['name']}")
+
+def get_species(result_2):
+    """Get and display pokemon species"""
+    species = result_2['genera']
+    for i in range(len(species)):
+        if species[i]['language']['name'] == "en":
+            print(TAB + "Species: " + f"{species[i]['genus']}")
+
+def get_height_weight(result):
+    """Get poke height and weight"""
+    height = result['height'] / 10
+    weight = result['weight'] / 10
+    print(TAB + f"Height: {height}m" + "  /  " + f"Weight: {weight}kg")
+
+def get_abilities(result):
+    """Get and display pokemon abilities"""
+    abilities = result['abilities']
+    if len(abilities) == 3:
+        ability_1 = abilities[0]['ability']['name']
+        ability_2 = abilities[1]['ability']['name']
+        ability_3 = abilities[2]['ability']['name'] + "(hidden)"
+        ab_str = ability_1 + " | " + ability_2 + " | " + ability_3
+    elif len(abilities) == 2:
+        ability_1 = abilities[0]['ability']['name']
+        ability_2 = abilities[1]['ability']['name'] + "(hidden)"
+        ab_str = ability_1 + " | " + ability_2
+    else:
+        ab_str = abilities[0]['ability']['name']
+    print(TAB + "Abilities: " + ab_str)
+
+def get_evolve_from(result_2):
+    """Get and display pokemon pre-evolution"""
+    evolve = result_2['evolves_from_species']
+    if evolve == None:
+        print("\n")
+    else:
+        print(TAB + "Evolves from: " + evolve['name'] + "\n")
+
+def get_base_stats(result):
+    """Get and display pokemon base stats"""
+    stat_dict = {'HP': 0, 'Attack': 0, 'Defense': 0, 'Special-Attack': 0, 'Special-Defense': 0,
+                 'Speed': 0}
+    for index, key in enumerate(stat_dict):
+        stat_dict[key] = result['stats'][index]['base_stat']
+    
+    for key in stat_dict:
+        print(TAB + f"{key}: " + f"{stat_dict[key]}")
+    print('\n')
+    pokemon_options(result)
+
+def get_moves(result):
+    """Get and display pokemon moves"""
+    moves = result['moves']
+    total = len(result['moves'])
+    count = 0
+    while count < total:
+        for i in range(15):
+            if count != total:
+                if i % 2 == 0:
+                    print(TAB + colored(moves[count]['move']['name'], 'red'))
+                    count += 1
+                else:
+                    print(TAB + moves[count]['move']['name'])
+                    count += 1
+            else:
+                break
+        print('\n' + TAB + colored('Total moves viewed: ' + f"{count}" + "/" + f"{total}", 'red'))
+        if count == total:
+            break
+        next_page = inquirer.confirm("View more moves?", default = True)
+        if next_page is True:
+            continue
+        else:
+            break
+    pokemon_options(result)
+
+def get_results(response):
+    """Show results function"""
     try:
         result = response.json()
+        poke_name = result['name']
     except:
-        print("Error: pokémon not found, please enter a new name \n")
+        print(TAB + "Error: pokémon not found, please enter a new name \n")
 
     if response.status_code == 200:
-        poke_header = pyfiglet.figlet_format(f"{answer['name'].lower()}", font="standard")
+        poke_header = pyfiglet.figlet_format(f"{poke_name.lower()}", font="standard")
         print(poke_header)
-        print("National Number: " + f"{result['id']}")
+        print(TAB + "National Number: " + f"{result['id']}")
 
-        # types
-        types = result['types']
-        if len(types) > 1:
-            type_str = types[0]['type']['name'] + "/" + types[1]['type']['name']
-            print("Type: " + type_str)
-        else:
-            print("Type: " + f"{types[0]['type']['name']}")
-
-        # species
         response_2 = requests.get(f"{result['species']['url']}")
         result_2 = response_2.json()
-        print("Species: " + f"{result_2['genera'][7]['genus']}")
 
-        # height/weight
-        height = result['height'] / 10
-        weight = result['weight'] / 10
-        print(f"Height: {height}m" + "  /  " + f"Weight: {weight}kg")
+        # get and print pokemon information
+        get_type(result)
+        get_species(result_2)
+        get_height_weight(result)
+        get_abilities(result)
+        get_evolve_from(result_2)
+        pokemon_options(result)
 
-        # abilities
-        abilities = result['abilities']
-        if len(abilities) == 3:
-            ab_str = abilities[0]['ability']['name'] + " | " + abilities[1]['ability']['name'] + " | " + abilities[2]['ability']['name'] + "(hidden)"
-        elif len(abilities) == 2:
-            ab_str = abilities[0]['ability']['name'] + " | " + abilities[1]['ability']['name'] + "(hidden)"
-        else:
-            ab_str = abilities[0]['ability']['name']
-        print("Abilities: " + ab_str)
-
-        # evolution chain
-        response_3 = requests.get(f"{result_2['evolution_chain']['url']}")
-        result_3 = response_3.json()
-        evolve = result_3['chain']['evolves_to']
-        if len(evolve) == 0:
-            evol_chain = result_3['chain']['species']['name']
-        elif len(evolve) == 1:
-            first = result_3['chain']['species']['name']
-            second = evolve[0]['species']['name']
-            evol_chain = first + " --> " + second
-            if len(evolve[0]['evolves_to']) == 1:
-                third = evolve[0]['evolves_to'][0]['species']['name']
-                evol_chain = first + " --> " + second + " --> " + third
-        print("Evolution Chain: " + evol_chain + "\n")
-
-        option = [
-        inquirer.List('choice',
-                      message="- Select an option",
-                      choices=["View base stats",
-                               "View moves (e.g., level-up, egg, tutor, machine, all)",
-                               "Return home"],
-                    ),
-        ]
-        answer = inquirer.prompt(option, theme=color_theme)
-        if answer['choice'] == "View base stats":
-            print("Not yet implemented\n")
-        if answer['choice'] == "View moves (e.g., level-up, egg, tutor, machine, all)":
-            print("Not yet implemented\n")
-        if answer['choice'] == "Return home":
-            return
+def pokemon_options(result):
+    """Second set of options after getting information about a pokemon"""
+    option = [
+    inquirer.List('choice',
+                    message="- Select an option",
+                    choices=["View base stats",
+                            "View moves",
+                            "Return home"],
+                ),
+    ]
+    answer = inquirer.prompt(option, theme=color_theme)
+    if answer['choice'] == "View base stats":
+        get_base_stats(result)
+    if answer['choice'] == "View moves":
+        get_moves(result)
+    if answer['choice'] == "Return home":
+        return
 
 
 if __name__ == "__main__":

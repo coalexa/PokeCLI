@@ -6,8 +6,6 @@ import textwrap
 import time
 from termcolor import colored
 
-TAB = "   "
-
 # change text selection color for better readability
 color_theme = inquirer.themes.load_theme_from_dict({"List": {"selection_color": "bright_red", "selection_cursor": ">"}})
 
@@ -96,22 +94,22 @@ def get_type(result):
     types = result['types']
     if len(types) > 1:
         type_str = types[0]['type']['name'] + "/" + types[1]['type']['name']
-        print(TAB + "Type: " + type_str)
+        print(" ○ " + "Type: " + type_str)
     else:
-        print(TAB + "Type: " + f"{types[0]['type']['name']}")
+        print(" ○ " + "Type: " + f"{types[0]['type']['name']}")
 
 def get_species(result_2):
     """Get and display pokemon species"""
     species = result_2['genera']
     for i in range(len(species)):
         if species[i]['language']['name'] == "en":
-            print(TAB + "Species: " + f"{species[i]['genus']}")
+            print(" ○ " + "Species: " + f"{species[i]['genus']}")
 
 def get_height_weight(result):
     """Get poke height and weight"""
     height = result['height'] / 10
     weight = result['weight'] / 10
-    print(TAB + f"Height: {height}m" + "  /  " + f"Weight: {weight}kg")
+    print(" ○ " + f"Height: {height}m" + "  /  " + f"Weight: {weight}kg")
 
 def get_abilities(result):
     """Get and display pokemon abilities"""
@@ -127,7 +125,7 @@ def get_abilities(result):
         ab_str = ability_1 + " | " + ability_2
     else:
         ab_str = abilities[0]['ability']['name']
-    print(TAB + "Abilities: " + ab_str)
+    print(" ○ " + "Abilities: " + ab_str)
 
 def get_evolve_from(result_2):
     """Get and display pokemon pre-evolution"""
@@ -135,7 +133,7 @@ def get_evolve_from(result_2):
     if evolve == None:
         print("\n")
     else:
-        print(TAB + "Evolves from: " + evolve['name'] + "\n")
+        print(" ○ " + "Evolves from: " + evolve['name'] + "\n")
 
 def get_base_stats(result):
     """Get and display pokemon base stats"""
@@ -145,7 +143,7 @@ def get_base_stats(result):
         stat_dict[key] = result['stats'][index]['base_stat']
     
     for key in stat_dict:
-        print(TAB + f"{key}: " + f"{stat_dict[key]}")
+        print(" ○ " + f"{key}: " + f"{stat_dict[key]}")
     print('\n')
     pokemon_options(result)
 
@@ -158,14 +156,14 @@ def get_moves(result):
         for i in range(15):
             if count != total:
                 if i % 2 == 0:
-                    print(TAB + colored(moves[count]['move']['name'], 'red'))
+                    print(colored(" ○ " + moves[count]['move']['name'], 'red'))
                     count += 1
                 else:
-                    print(TAB + moves[count]['move']['name'])
+                    print(" ○ " + moves[count]['move']['name'])
                     count += 1
             else:
                 break
-        print('\n' + TAB + colored('Total moves viewed: ' + f"{count}" + "/" + f"{total}", 'red'))
+        print('\n' + " ○ " + colored('Total moves viewed: ' + f"{count}" + "/" + f"{total}", 'red'))
         if count == total:
             break
         next_page = inquirer.confirm("View more moves?", default = True)
@@ -181,12 +179,12 @@ def get_results(response):
         result = response.json()
         poke_name = result['name']
     except:
-        print(TAB + "Error: pokémon not found, please enter a new name \n")
+        print(" ○ " + "Error: pokémon not found, please enter a new name \n")
 
     if response.status_code == 200:
         poke_header = pyfiglet.figlet_format(f"{poke_name.lower()}", font="standard")
         print(poke_header)
-        print(TAB + "National Number: " + f"{result['id']}")
+        print(" ○ " + "National Number: " + f"{result['id']}")
 
         response_2 = requests.get(f"{result['species']['url']}")
         result_2 = response_2.json()

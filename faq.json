@@ -17,13 +17,9 @@
     ],
     "5": [
         "- Where can I view the moves that a pokémon can learn?",
-        "Since a single pokémon can learn over 100 moves, it would clog up the page and none of the other information would be seen. Instead, once the page of information comes up, use the up and down arrow keys to select the *View moves* option. Once selected, type in all, level-up, egg, tutor, or machine to see either all moves or the moves learned by a specific method (level-up, egg, tutor, machine)."
+        "Since a single pokémon can learn over 100 moves, it would clog up the page and none of the other information would be seen. Instead, once the page of information comes up, use the up and down arrow keys to select the *View moves* option. Once selected, moves will appear in sets of 15 and you have the option to view more moves after each set is generated or select no and continue viewing other information."
     ],
     "6": [
-        "- How do I view the evolution chain of a specific pokémon?",
-        "First you must search for that pokémon by name and once the information page pops up, the evolution chain information is listed on the page."
-    ],
-    "7": [
         "- How do I view the base stats of a specific pokémon?",
         "First you must search for that pokémon by name and once the information page pops up, use the up and down arrow keys to select the *View base stats* option."
     ]

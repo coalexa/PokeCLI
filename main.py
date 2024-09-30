@@ -14,12 +14,13 @@ def main():
     """Main driver function"""
     name = pyfiglet.figlet_format("PokeCLI", font="standard")
     goodbye_msg = pyfiglet.figlet_format("GoodBye", font="standard")
+
     print(name)
     print(">> Welcome to the pokémon CLI tool")
     print(">> With this tool, you can find information about any pokémon")
     print(">> To start, use the up and down arrow keys and select an option")
-    print("** Have a question? Select the FAQ option to get help **")
-    print("\n")
+    print("** Have a question? Select the FAQ option to get help **\n")
+
     while True:
         choice = options()['choice']
         if choice == "FAQ":
@@ -47,7 +48,7 @@ def options():
     return answer
 
 def faq():
-    """FAQ function"""
+    """FAQ function to display commonly asked questions"""
     faq_header = pyfiglet.figlet_format("FAQ", font="standard")
     print(faq_header)
     f = open('faq.json')
@@ -83,7 +84,7 @@ def generate_random_pokemon():
     prng_file = open('prng-service.txt', 'w')
     prng_file.write('run')
     prng_file.close()
-    time.sleep(2)
+    time.sleep(1)
     prng_file = open('prng-service.txt', 'r')
     rand_num = prng_file.readline()
 
@@ -170,8 +171,8 @@ def get_moves(result):
 
         if count == total:
             break
-        next_page = inquirer.confirm("View more moves?", default = True)
-        if next_page is True:
+        next_set = inquirer.confirm("View more moves?", default = True)
+        if next_set is True:
             continue
         else:
             break
@@ -183,7 +184,7 @@ def get_results(response):
         result = response.json()
         poke_name = result['name']
     except:
-        print(" ○ " + "Error: pokémon not found, please enter a new name \n")
+        print(" > " + "Error: pokémon not found, please enter a new name \n")
 
     if response.status_code == 200:
         poke_header = pyfiglet.figlet_format(f"{poke_name.lower()}", font="standard")
@@ -202,7 +203,7 @@ def get_results(response):
         pokemon_options(result)
 
 def pokemon_options(result):
-    """Second set of options after getting information about a pokemon"""
+    """Options for user selection when viewing pokemon information"""
     option = [
     inquirer.List('choice',
                     message="- Select an option",
